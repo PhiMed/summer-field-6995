@@ -1,13 +1,20 @@
 require 'rails_helper'
 
-RSpec.describe Movie do
-  describe 'relationships' do
-    it { should belong_to(:studio) }
-    it { should have_many :actor_movies }
-    it {should have_many(:actors).through(:actor_movies)}
+RSpec.describe 'the movie show page' do
+
+  it 'lists the movie attributes' do
+    universal = Studio.create!(name: 'Universal Studios', location: 'Hollywood')
+    ark = universal.movies.create!(title: 'Raiders of the Lost Ark', creation_year: 1981, genre: 'Action/Adventure')
+
+    visit "/movies/#{ark.id}"
+
+    expect(page).to have_content(ark.title)
+    expect(page).to have_content(ark.creation_year)
+    expect(page).to have_content(ark.genre)
+
   end
 
-  it 'lists its actors' do
+  it 'lists actors in the movie, youngest to oldest' do
     universal = Studio.create!(name: 'Universal Studios', location: 'Hollywood')
     ark = universal.movies.create!(title: 'Raiders of the Lost Ark', creation_year: 1981, genre: 'Action/Adventure')
     actor_1 = Actor.create!(name: 'Harrison Ford', age: 42)
@@ -15,18 +22,11 @@ RSpec.describe Movie do
     ActorMovie.create(actor_id: actor_1.id, movie_id: ark.id)
     ActorMovie.create(actor_id: actor_2.id, movie_id: ark.id)
 
-    expect(ark.actors).to eq([actor_1,actor_2])
-  end
+    visit "/movies/#{ark.id}"
 
-  it 'can order its actors youngest to oldest' do
-    universal = Studio.create!(name: 'Universal Studios', location: 'Hollywood')
-    ark = universal.movies.create!(title: 'Raiders of the Lost Ark', creation_year: 1981, genre: 'Action/Adventure')
-    actor_1 = Actor.create!(name: 'Harrison Ford', age: 42)
-    actor_2 = Actor.create!(name: 'Miriam', age: 34)
-    ActorMovie.create(actor_id: actor_1.id, movie_id: ark.id)
-    ActorMovie.create(actor_id: actor_2.id, movie_id: ark.id)
-
-    expect(ark.actors_young_to_old).to eq([actor_2,actor_1])
+    expect(page).to have_content(actor_1.name)
+    expect(page).to have_content(actor_2.name)
+    expect(actor_2.name).to appear_before(actor_1.name)
   end
 
   it 'lists average actors age' do
@@ -37,6 +37,10 @@ RSpec.describe Movie do
     ActorMovie.create(actor_id: actor_1.id, movie_id: ark.id)
     ActorMovie.create(actor_id: actor_2.id, movie_id: ark.id)
 
-    expect(ark.average_actor_age).to eq(38)
+    visit "/movies/#{ark.id}"
+
+    expect(page).to have_content(ark.average_actor_age)
   end
+
+
 end
