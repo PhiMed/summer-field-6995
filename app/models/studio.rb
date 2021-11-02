@@ -5,5 +5,4 @@ class Studio < ApplicationRecord
     Movie.where(studio_id: self.id)
   end
 
-
 end

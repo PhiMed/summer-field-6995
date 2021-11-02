@@ -8,9 +8,10 @@ RSpec.describe 'the studios index' do
     visit "/studios"
 
     expect(page).to have_content(universal.name)
+    expect(page).to have_content(universal.location)
   end
 
-  it 'lists studios missions' do
+  it 'lists studios movies' do
     universal = Studio.create!(name: 'Universal Studios', location: 'Hollywood')
     ark = universal.movies.create!(title: 'Raiders of the Lost Ark', creation_year: 1981, genre: 'Action/Adventure')
     shrek = universal.movies.create!(title: 'Shrek', creation_year: 2000, genre: 'Comedy')
