@@ -5,8 +5,17 @@
 <p>Genre: <%= @movie.genre%></p>
 
 
-<p>Actors:</p>
+<h3>Actors:</h3>
 <% @movie.actors_young_to_old.each do |actor| %>
-  <p>Name:<%= actor.name %></p>
+  <p>Name:  <%= actor.name %></p>
 <% end %>
+<hr>
 <p>Average actor age:<%= @movie.average_actor_age%> </p>
+
+<h3>Add an actor:</h3>
+<%= form_with url: "/movies/#{@movie.id}/actors", method: :post, local: true do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name, required: true%>
+  <%= form.submit "Add actor" %>
+  <%= form.hidden_field :id, value: @movie.id %>
+  <% end %>

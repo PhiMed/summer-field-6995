@@ -42,5 +42,23 @@ RSpec.describe 'the movie show page' do
     expect(page).to have_content(ark.average_actor_age)
   end
 
+  it 'can add an actor to the movie' do
+    universal = Studio.create!(name: 'Universal Studios', location: 'Hollywood')
+    ark = universal.movies.create!(title: 'Raiders of the Lost Ark', creation_year: 1981, genre: 'Action/Adventure')
+    actor_1 = Actor.create!(name: 'Harrison Ford', age: 42)
+    actor_2 = Actor.create!(name: 'Miriam', age: 34)
+    actor_3 = Actor.create!(name: 'Caroline', age: 34)
+    ActorMovie.create(actor_id: actor_1.id, movie_id: ark.id)
+    ActorMovie.create(actor_id: actor_2.id, movie_id: ark.id)
+
+    visit "/movies/#{ark.id}"
+    fill_in('Name', with: 'Caroline')
+    click_button('Add actor')
+    expect(current_path).to eq("/movies/#{ark.id}")
+    expect(page).to have_content("Caroline")
+
+  end
+
+
 
 end
